@@ -13,7 +13,7 @@ password
 loggedInStatus
 numGroups : int
 groupNames : Array[]
-isAdmin : bool
+isAdmin : boolean
 
 # Constructor
 public Account(uName, Password) :
@@ -60,9 +60,6 @@ return ;
 
 # Verifies that Account is not already an Administrator of a group
 def checkIfAdmin() :
-    if isAdmin == 2 :
-        return
-
 return True;
 
 # Sends an join request attached 
