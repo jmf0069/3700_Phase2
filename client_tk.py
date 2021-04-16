@@ -1,8 +1,8 @@
 from tkinter import *
+from tkinter import messagebox
+
 
 class Application(Frame):
-    def register_acc(self):
-        print("getting there...")
 
     def login(self):
         self.Frame2 = Frame(root, padx=5, pady=5)
@@ -21,6 +21,44 @@ class Application(Frame):
         label2.grid(row=1, column=1)
         e2 = Entry(self.Frame2)
         e2.grid(row=1, column=2)
+
+    def register_acc(self):
+        self.Frame3 = Frame(root, padx=5, pady=5)
+        self.Frame3.grid(row=0, column=1)
+        self.Frame3.configure(relief=GROOVE)
+        self.Frame3.configure(borderwidth="2")
+        self.Frame3.configure(relief=GROOVE)
+        self.Frame3.configure(background="#ffffff")
+        self.Frame3.configure(highlightbackground="#ffffff")
+        self.Frame3.configure(highlightcolor="black")
+        label1 = Label(self.Frame3, text='Username:', padx=5, pady=5)
+        label1.grid(row=0, column=1)
+        user = Entry(self.Frame3)
+        user.grid(row=0, column=2)
+        label2 = Label(self.Frame3, text='Password:', padx=5, pady=5)
+        label2.grid(row=1, column=1)
+        pass1 = Entry(self.Frame3)
+        pass1.grid(row=1, column=2)
+        label3 = Label(self.Frame3, text='Confirm Password:', padx=5, pady=5)
+        label3.grid(row=2, column=1)
+        pass2 = Entry(self.Frame3)
+        pass2.grid(row=2, column=2)
+        self.submitreg = Button(self.Frame3,
+                    text="Submit",
+                    command=partial(verifyPasswordRegister, user, pass1, pass2)) #fix this ahhhhhhhhhhhhhh
+        self.submitreg.grid(row=3, column=2)
+
+
+    def registerAccount(self):
+        username = self.register_acc.e1
+        password = self.register_acc.e2
+    
+    def verifyPasswordRegister(user, pass1, pass2):
+        if (self.pass1 != self.pass2):
+            messagebox.showerror("showerror", "Passwords do not match. Try again.")
+        else:
+            messagebox.showinfo("showinfo", "Congratulations, " + user + "! You are registered.")
+        
 
     def createWidgets(self):
         self.Frame1 = Frame(root, padx=5, pady=5)
