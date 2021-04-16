@@ -1,13 +1,11 @@
-/**
-*
-* TEAM 5 
-* JOSHUA WYATT, BENJAMIN RHEE, NATHAN BIAGIONI, ALLEN CARTER, AND JAKE FARLEY
-*
-* Account class serves as foundation for accounts on the system. 
-*/
+# TEAM 5 
+# JOSHUA WYATT, BENJAMIN RHEE, NATHAN BIAGIONI, ALLEN CARTER, AND JAKE FARLEY
+#
+# Account class serves as foundation for accounts on the system. 
+
 class Account :
 
-// Variables
+# Variables
 username 
 password
 loggedInStatus
