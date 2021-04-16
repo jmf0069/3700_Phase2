@@ -1,3 +1,8 @@
+# TEAM 5
+# JOSHUA WYATT, BENJAMIN RHEE, NATHAN BIAGIONI, ALLEN CARTER, AND JAKE FARLEY
+# 
+# Client provides GUI for users.
+
 import pygame
 import sys
 
@@ -23,7 +28,7 @@ height = screen.get_height()
 smallfont = pygame.font.SysFont('Corbel',30)
 bigfont = pygame.font.SysFont('Corbel',50)
 
-running = True
+
 
 class Scene(object):
     def __init__(self):
@@ -69,9 +74,9 @@ class MenuScreen(Scene):
 
     def render(self, screen):
         # color screen
-        self.bg = Surface(res)
-        self.bg.fill((60,25,60))
-        # screen.fill((60,25,60))
+        # self.bg = Surface(res)
+        # self.bg.fill((60,25,60))
+        screen.fill((60,25,60))
 
         # standard quit rectangle
         quitrectStd = pygame.draw.rect(screen,color_dark,[width/2-70,height/2,140,40])
@@ -85,6 +90,7 @@ class MenuScreen(Scene):
 
         # superimposing the text onto the button
         screen.blit(quitText , quittext_rect)
+        
 
     def update(self):
         pass
@@ -106,26 +112,29 @@ class MenuScreen(Scene):
         # changes to lighter shade
         if width/2-70 <= mouse[0] <= width/2+70 and height/2 <= mouse[1] <= height/2+40:
             quitrectHover = pygame.draw.rect(screen,color_light,[width/2-70,height/2,140,40])
+            pygame.display.update()
+        else:
+            # standard quit rectangle
+            quitrectStd = pygame.draw.rect(screen,color_dark,[width/2-70,height/2,140,40])      
 
-def main():    
+manager = SceneManager()
+running = True
+while running:
+                
+    # fills the screen with a color
+    screen.fill((60,25,60))
+    
+    # stores the (x,y) coordinates into
+    # the variable as a tuple
+    mouse = pygame.mouse.get_pos()
 
-    manager = SceneManager()
+    for ev in pygame.event.get():
+    
+        if ev.type == pygame.QUIT:
+            pygame.quit()
 
-    while running:
-                    
-        # fills the screen with a color
-        screen.fill((60,25,60))
-        
-        # stores the (x,y) coordinates into
-        # the variable as a tuple
-        mouse = pygame.mouse.get_pos()
-
-        # if pygame.event.get(QUIT):
-        #     running = False
-        #     return
-
-        manager.scene.handle_events(pygame.event.get())
-        manager.scene.update()
-        manager.scene.render(screen)
-        pygame.display.update()
-        # updates the frames of the game
+    manager.scene.handle_events(pygame.event.get())
+    manager.scene.update()
+    manager.scene.render(screen)
+    pygame.display.update()
+pygame.quit()
