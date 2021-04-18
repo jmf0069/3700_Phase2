@@ -13,8 +13,9 @@ owner : admin
 members : Array
 
 # Constructor ?
-def Group() : 
-
+def Group(groupN) : 
+    gName = groupN
+    
 # Returns array of preferred region listed by the group
 def getPreferedRegion() :
     return preferredRegion
