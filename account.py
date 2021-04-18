@@ -49,20 +49,22 @@ def setPassword(String passW) :
 def login(String userN, String passW) :
 
 
-
 def displayGroup() :
 
 # Method used to create a group entity. Requires isAdmin to be false
 def createGroup(String gName) :
-return ;
+	if checkIfAdmin() = false :
+		
 
 # Verifies that Account is not already an Administrator of a group
 def checkIfAdmin() :
-return True;
+	if isAdmin = true :
+		return true
+	else : 
+		return false
 
 # Sends an join request attached 
 def requestToJoin(String gName) :
-
 
 
 
