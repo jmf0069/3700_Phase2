@@ -17,11 +17,11 @@ def Group() :
 
 # Returns array of preferred region listed by the group
 def getPreferedRegion() :
-    return 
+    return preferredRegion
 
 # 
 def setPreferredRegion(region) : 
-
+    preferredRegion = region
 
 # Returns name associated with the group
 def getGroupName() :
@@ -29,14 +29,16 @@ def getGroupName() :
 
 # Used in group creation, sets the name of the group if the name is not already taken.
 def setGroupName(groupName) :
-
+    groupName = gName
+    
 # Returns current group size
 def getGroupSize() :
     return gSize
 
 # Is capable of being changed at any time by the admin, sets the maximum group size
 def setGroupSize() : 
-
+    
 # 
 def sendInvite(username) :
+    
     
