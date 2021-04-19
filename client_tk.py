@@ -26,19 +26,42 @@ class Application(Frame):
         e2.grid(row=1, column=3)
         self.submitlogin = Button(self.LoginFrame,
                                   text="Submit",
-                                  command=lambda: (self.checkLoginCred(e1.get(), e2.get()), self.setUsername(e1.get()))) #fix this ahhhhhhhhhhhhhh
+                                  command=lambda: (self.checkLoginCred(e1, e2))) #, self.setUsername(e1.get())
         self.submitlogin.grid(row=3, column=3)
 
-    def setUsername(self, user):
-        self.username = user
+    def add_account(self, user, password):
+        with open(USER_DATA, "a") as data:
+            data.write(user + " " + password +"\n")
 
-    def getUsername(self):
-        return self.username
+    def get_existing_users(self):
+        with open(USER_DATA, "r") as data:
+            for line in data.readlines():
+                # This expects each line of a file to be (name pass) seperated by whitespace
+                username, password = line.split()
+                yield username, password
+
+    def is_registered(self, username, password):
+        with open(USER_DATA, "r") as data:
+            for line in data.readlines():
+                userData, passData = line.split()
+                if (userData == username):
+                    if (passData == password):
+                        return True
+            return False
+
+    # def setUsername(self, user):
+    #     self.username = user
+
+    # def getUsername(self):
+    #     return self.username
 
     def checkLoginCred(self, e1, e2):
         if (e1 != ""):
             if (e2 != ""):
-                self.postLoginScreen()
+                if (self.is_registered(e1.get(), e2.get())):
+                    self.postLoginScreen()
+                else:
+                    messagebox.showerror("showerror", "You are not registered.")
             else:
                 messagebox.showerror("showerror", "Please enter a password.")
         else:
@@ -92,29 +115,29 @@ class Application(Frame):
         self.CreateGroupFrame.configure(highlightbackground="#ffffff")
         self.CreateGroupFrame.configure(highlightcolor="black")
 
-        member1Label = Label(self.CreateGroupFrame, text='Member 1', padx=5, pady=2)
+        member1Label = Label(self.CreateGroupFrame, text='Group Owner: ', padx=5, pady=2)
         member1Label.grid(row=0, column=0)
         member1Entry = Entry(self.CreateGroupFrame)
         member1Entry.grid(row=0, column=1)
-        member1Entry.insert(0, self.getUsername())
-        member2Label = Label(self.CreateGroupFrame, text='Member 2: ', padx=5, pady=2)
+        # member1Entry.insert(0, self.getUsername())
+        member2Label = Label(self.CreateGroupFrame, text='Member 2:       ', padx=5, pady=2)
         member2Label.grid(row=1, column=0)
         member2Entry = Entry(self.CreateGroupFrame)
         member2Entry.grid(row=1, column=1)
-        member3Label = Label(self.CreateGroupFrame, text='Member 3: ', padx=5, pady=2)
+        member3Label = Label(self.CreateGroupFrame, text='Member 3:       ', padx=5, pady=2)
         member3Label.grid(row=2, column=0)
         member3Entry = Entry(self.CreateGroupFrame)
         member3Entry.grid(row=2, column=1)
-        member4Label = Label(self.CreateGroupFrame, text='Member 4: ', padx=5, pady=2)
+        member4Label = Label(self.CreateGroupFrame, text='Member 4:       ', padx=5, pady=2)
         member4Label.grid(row=3, column=0)
         member4Entry = Entry(self.CreateGroupFrame)
         member4Entry.grid(row=3, column=1)
-        member5Label = Label(self.CreateGroupFrame, text='Member 5: ', padx=5, pady=2)
+        member5Label = Label(self.CreateGroupFrame, text='Member 5:       ', padx=5, pady=2)
         member5Label.grid(row=4, column=0)
         member5Entry = Entry(self.CreateGroupFrame)
         member5Entry.grid(row=4, column=1)
 
-        groupNameLabel = Label(self.CreateGroupFrame, text='Group Name: ', padx=5, pady=10)
+        groupNameLabel = Label(self.CreateGroupFrame, text='Group Name:  ', padx=5, pady=10)
         groupNameLabel.grid(row=5, column=0)
         groupNameEntry = Entry(self.CreateGroupFrame)
         groupNameEntry.grid(row=5, column=1)
@@ -225,6 +248,7 @@ class Application(Frame):
     def verifyPasswordRegister(self, user1, pass1, pass2):
         if (pass1.get() == pass2.get()):
             messagebox.showinfo("showinfo", "Congratulations! You are registered.")
+            self.add_account(user1.get(), pass1.get())
             user1.delete(0, 'end')
             pass1.delete(0, 'end')
             pass2.delete(0, 'end')
@@ -264,7 +288,7 @@ class Application(Frame):
     def __init__(self, master=None):
         Frame.__init__(self, master)
         self.createWidgets()
-
+USER_DATA = "User_Data.txt"
 root = Tk()
 root.geometry("720x720")
 app = Application(master=root)
