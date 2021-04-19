@@ -1,7 +1,7 @@
 from tkinter import *
 from tkinter import messagebox
 
-# Application Class: The client for the user. Relies on other classes.
+# Application Class: The client for the user.
 class Application(Frame):
 
     # login(self) Funtion: Takes two entries from user (username and password), 
@@ -46,14 +46,15 @@ class Application(Frame):
                 userData, passData = line.split()
                 if (userData == username):
                     if (passData == password):
+                        self.setUsername(username)
                         return True
             return False
 
-    # def setUsername(self, user):
-    #     self.username = user
+    def setUsername(self, user):
+        self.username = user
 
-    # def getUsername(self):
-    #     return self.username
+    def getUsername(self):
+        return self.username
 
     def checkLoginCred(self, e1, e2):
         if (e1 != ""):
@@ -61,7 +62,7 @@ class Application(Frame):
                 if (self.is_registered(e1.get(), e2.get())):
                     self.postLoginScreen()
                 else:
-                    messagebox.showerror("showerror", "You are not registered.")
+                    messagebox.showerror("showerror", "Invalid username and/or password.")
             else:
                 messagebox.showerror("showerror", "Please enter a password.")
         else:
@@ -104,6 +105,35 @@ class Application(Frame):
         self.PostLoginFrame.place_forget()
         self.createWidgets()
 
+    def get_existing_groups(self):
+        group_array = []
+        with open(GROUP_DATA, "r") as data:
+            for line in data.readlines():
+                # This expects each line of a file to be (name pass) seperated by whitespace
+                group_array.append(line.split())
+                yield group_array
+    
+    def groupExists(self, groupname):
+        groups = []
+        with open(GROUP_DATA, "r") as data:
+            for line in data.readlines():
+                groups.append(line.split())
+                if (groups[0] == groupname):
+                    return True
+            return False
+
+    def addGroup(self, group):
+        with open(GROUP_DATA, "a") as data:
+            data.write(group[0] + " " + group[1] + " " + group[2] + " " + group[3] + " " + group[4] + " " + group[5] +"\n")
+
+    def checkGroupExists(self, groupname, group):
+        if (self.groupExists(groupname)):
+            messagebox.showerror("showerror", "Group name is taken. Please try another.")
+        else:
+            # messagebox.showinfo("showinfo", "Your group, " + groupname + ", has been created!")
+            self.addGroup(group)
+            
+
     def createGroup(self):
         self.PostLoginFrame.place_forget()
         self.CreateGroupFrame = Frame(root, padx=5, pady=5)
@@ -119,7 +149,7 @@ class Application(Frame):
         member1Label.grid(row=0, column=0)
         member1Entry = Entry(self.CreateGroupFrame)
         member1Entry.grid(row=0, column=1)
-        # member1Entry.insert(0, self.getUsername())
+        member1Entry.insert(0, self.getUsername())
         member2Label = Label(self.CreateGroupFrame, text='Member 2:       ', padx=5, pady=2)
         member2Label.grid(row=1, column=0)
         member2Entry = Entry(self.CreateGroupFrame)
@@ -141,9 +171,11 @@ class Application(Frame):
         groupNameLabel.grid(row=5, column=0)
         groupNameEntry = Entry(self.CreateGroupFrame)
         groupNameEntry.grid(row=5, column=1)
-
+        groupArray = [groupNameEntry.get(), member1Entry.get(), member2Entry.get(), 
+                      member3Entry.get(), member4Entry.get(), member5Entry.get()]
         self.submitNewGroupButton = Button(self.CreateGroupFrame,
-                                  text="Submit",)
+                                           text="Submit",
+                                           command=lambda: self.checkGroupExists(groupNameEntry.get(), groupArray))
         self.submitNewGroupButton.place(relx=0.27, rely=0.7, relwidth=0.2, relheight=0.1)
         self.clearGroupEntriesButton = Button(self.CreateGroupFrame,
                                               text="Clear",
@@ -288,6 +320,8 @@ class Application(Frame):
     def __init__(self, master=None):
         Frame.__init__(self, master)
         self.createWidgets()
+
+GROUP_DATA = "Group_Data.txt"
 USER_DATA = "User_Data.txt"
 root = Tk()
 root.geometry("720x720")
