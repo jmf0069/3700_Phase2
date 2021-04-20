@@ -1,6 +1,8 @@
 from tkinter import *
 from tkinter import messagebox
-
+# TEAM 5 
+# JOSHUA WYATT, BENJAMIN RHEE, NATHAN BIAGIONI, ALLEN CARTER, AND JAKE FARLEY
+#
 # Application Class: The client for the user.
 class Application(Frame):
 
@@ -29,10 +31,14 @@ class Application(Frame):
                                   command=lambda: (self.checkLoginCred(e1, e2)))
         self.submitlogin.grid(row=3, column=3)
 
+    # add_account(user, password) function takes the username and password
+    # of the user and adds the account to the USER_DATA.txt file.
     def add_account(self, user, password):
         with open(USER_DATA, "a") as data:
             data.write(user + " " + password +"\n")
 
+    # get_existing_users() function is used for checking a new user against
+    # the other existing users for duplicates etc.
     def get_existing_users(self):
         with open(USER_DATA, "r") as data:
             for line in data.readlines():
@@ -40,6 +46,8 @@ class Application(Frame):
                 username, password = line.split()
                 yield username, password
 
+    # is_registered(username, password) function takes the username and password
+    # of a user to return a boolean showing if the account exists or not.
     def is_registered(self, username, password):
         with open(USER_DATA, "r") as data:
             for line in data.readlines():
@@ -50,12 +58,16 @@ class Application(Frame):
                         return True
             return False
 
+    # setUsername(user) function sets the username.
     def setUsername(self, user):
         self.username = user
 
+    # getUsername() function gets the username.
     def getUsername(self):
         return self.username
 
+    # checkLoginCred(e1, e2) takes the username and password of user and makes sure it's credible,
+    # then assigns the logged in user to a group if they're in one.
     def checkLoginCred(self, e1, e2):
         if (e1 != ""):
             if (e2 != ""):
@@ -111,16 +123,6 @@ class Application(Frame):
     def logout(self):
         self.PostLoginFrame.place_forget()
         self.createWidgets()
-
-    # def checkIfInGroup(self, user):
-    #     group_array = []
-    #     with open(GROUP_DATA, "r") as data:
-    #         for line in data.readlines():
-    #             # This expects each line of a file to be (name pass) seperated by whitespace
-    #             if user in line:
-    #                 group_array.append(line.split())
-    #                 return group_array
-    #         return None
 
     def beforeCreateGroup(self, user):
         if self.findGroupIn(user) == None:
@@ -268,9 +270,6 @@ class Application(Frame):
         member5.delete(0, 'end')
         groupName.delete(0, 'end')
 
-    # def leaveGroup(self, user, group):
-        
-
     def manageGroup(self):
         self.PostLoginFrame.place_forget()
         self.ManageGroupFrame = Frame(root, padx=5, pady=5)
@@ -281,10 +280,6 @@ class Application(Frame):
         self.ManageGroupFrame.configure(background="#ffffff")
         self.ManageGroupFrame.configure(highlightbackground="#ffffff")
         self.ManageGroupFrame.configure(highlightcolor="black")
-        # self.viewGroupButton = Button(self.ManageGroupFrame,
-        #                           text="Manage Group",
-        #                           command=lambda: self.viewGroup())
-        # self.viewGroupButton.place(relx=0.12, rely=0.3, relwidth=0.2, relheight=0.1)
         self.leaveGroupButton = Button(self.ManageGroupFrame,
                                   text="Leave Group",
                                   command=lambda: self.leaveGroup())
@@ -295,19 +290,19 @@ class Application(Frame):
                                             command=lambda: self.returnFromGroup())
         self.returnFromGroupButton.place(relx=0.12, rely=0.52, relwidth=0.2, relheight=0.1)
 
-    def viewGroup(self):
-        self.viewGroupFrame = Frame(root, padx=5, pady=5)
-        self.viewGroupFrame.place(relx=0.435, rely=0.255, relwidth=0.36, relheight=0.18)
-        self.viewGroupFrame.configure(relief=GROOVE)
-        self.viewGroupFrame.configure(borderwidth="2")
-        self.viewGroupFrame.configure(relief=GROOVE)
-        self.viewGroupFrame.configure(background="#ffffff")
-        self.viewGroupFrame.configure(highlightbackground="#ffffff")
-        self.viewGroupFrame.configure(highlightcolor="black")
-        groupTopLabel = Label(self.viewGroupFrame, text=self.groupArray[0], padx=5, pady=2)
-        # groupTopLabel.place()
-        member1Label = Label(self.viewGroupFrame, text=self.groupArray[1], padx=5, pady=2)
-        member1Label.pack(side=TOP,ipadx=2, ipady=6)
+    # def viewGroup(self):
+    #     self.viewGroupFrame = Frame(root, padx=5, pady=5)
+    #     self.viewGroupFrame.place(relx=0.435, rely=0.255, relwidth=0.36, relheight=0.18)
+    #     self.viewGroupFrame.configure(relief=GROOVE)
+    #     self.viewGroupFrame.configure(borderwidth="2")
+    #     self.viewGroupFrame.configure(relief=GROOVE)
+    #     self.viewGroupFrame.configure(background="#ffffff")
+    #     self.viewGroupFrame.configure(highlightbackground="#ffffff")
+    #     self.viewGroupFrame.configure(highlightcolor="black")
+    #     groupTopLabel = Label(self.viewGroupFrame, text=self.groupArray[0], padx=5, pady=2)
+    #     # groupTopLabel.place()
+    #     member1Label = Label(self.viewGroupFrame, text=self.groupArray[1], padx=5, pady=2)
+    #     member1Label.pack(side=TOP,ipadx=2, ipady=6)
 
     def returnFromNewGroup(self):
         self.CreateGroupFrame.place_forget()
