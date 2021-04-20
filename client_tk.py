@@ -61,10 +61,11 @@ class Application(Frame):
             if (e2 != ""):
                 if (self.is_registered(e1.get(), e2.get())):
                     self.setUsername(e1.get())
-                    if user in self.get_existing_groups():
+                    if (self.findGroupIn(e1.get()) != None):
                         # Need to check if user is already in a group upon login, then assign them to said group upon login submission.
-                        
-                            self.setGroupName(grouparr[0])  
+                        grouparr = self.findGroupIn(e1.get())
+                        self.setGroupArray(grouparr[0][0], grouparr[0][1], grouparr[0][2], grouparr[0][3], grouparr[0][4], grouparr[0][5])
+                        self.setGroupName(grouparr[0][0])
                         self.postLoginScreen()
                     self.postLoginScreen()
                 else:
@@ -80,6 +81,7 @@ class Application(Frame):
         except AttributeError as e:
             self.LoginFrame.place_forget()
             self.MainMenuFrame.place_forget()
+        self.RegisterFrame.place_forget()
         self.LoginFrame.place_forget()
         self.MainMenuFrame.place_forget()
         self.PostLoginFrame = Frame(root, padx=5, pady=5)
@@ -93,7 +95,7 @@ class Application(Frame):
         self.createGroupButton = Button(self.PostLoginFrame,
                                         text='Create Group',
                                         padx=20, pady=20,
-                                        command=lambda: self.createGroup())
+                                        command=lambda: self.beforeCreateGroup(self.getUsername()))
         self.createGroupButton.pack(side=TOP, expand=True, fill=BOTH)
         self.manageGroupButton = Button(self.PostLoginFrame,
                                         text='Manage Group',
@@ -121,6 +123,12 @@ class Application(Frame):
     #                 return group_array
     #         return None
 
+    def beforeCreateGroup(self, user):
+        if self.findGroupIn(user) == None:
+            self.createGroup()
+        else:
+            messagebox.showerror("showerror", "You are already in a group. Please leave your group to create another.")
+
     def get_existing_groups(self):
         group_array = []
         with open(GROUP_DATA, "r") as data:
@@ -128,6 +136,15 @@ class Application(Frame):
                 # This expects each line of a file to be (name pass) seperated by whitespace
                 group_array.append(line.split())
                 yield group_array
+
+    def findGroupIn(self, user):
+        group_array = []
+        with open(GROUP_DATA, "r") as data:
+            for line in data.readlines():
+                if user in line:
+                    group_array.append(line.split())
+                    return group_array
+            return None
 
     def groupExists(self, groupname):
         groups = []
@@ -138,36 +155,33 @@ class Application(Frame):
                     return True
             return False
 
+    def leaveGroup(self):
+        try:
+            self.deleteGroup(self.getGroupName(), self.getUsername())
+        except AttributeError as e:
+            messagebox.showerror("showerror", "You are not currently in a group.")
+
     def addGroup(self, group):
-        with open(USER_DATA, "r") as udata:
-            for line in udata.readlines():
-                user, password = line.split()
-                if (user == group[1]):
+        groupCheck = []
+        with open(GROUP_DATA, "r") as gdata2:
+            for line in gdata2.readlines():
+                groupCheck = line.split()
+                if (self.getUsername() in groupCheck):
                     messagebox.showerror("showerror", "You are already in a group.\nTo make another one, you must leave your current one.")
+                    return
         with open(GROUP_DATA, "a") as gdata:
             gdata.write(group[0] + " " + group[1] + " " + group[2] + " " + group[3] + " " + group[4] + " " + group[5] +"\n")
-            messagebox.showinfo("showinfo", "Your group, " + groupname + ", has been created!")
+            messagebox.showinfo("showinfo", "Your group, " + group[0] + ", has been created!")
 
     def deleteGroup(self, groupname, user):
-        isFound = False
-        lineNum = -1
-        grouparr = []
-        with open(GROUP_DATA, "r") as gdata:
-            grouparr = gdata.readlines()
-            for lines in gdata.readlines():
-                lineNum += 1
-                line = lines.split()
-                if (groupname == line[0]):
-                    if (user in line):
-                        isFound = True
-                        break
-        if (isFound == True):
-            del lines[lineNum]
-            with open(GROUP_DATA, "w") as newgdata:
-                for line in lines:
-                    newgdata.write(line)
-        messagebox.showerror("showerror", "You are not currently in a group.")
-        
+        with open("GROUP_DATA.txt", "r") as gdata:
+            lines = gdata.readlines()
+
+        with open("GROUP_DATA.txt", "w") as gdata:
+            for line in lines:
+                if str(user) not in line:
+                    gdata.write(line)
+        messagebox.showinfo("showinfo", "You have successfully left the group.")
 
     def checkGroupExists(self, groupname, group):
         if (self.groupExists(groupname)):
@@ -183,8 +197,13 @@ class Application(Frame):
         return self.groupNameOvr
 
     def setGroupArray(self, groupname, m1, m2, m3, m4, m5):
-        self.groupArray = [groupname.get(), m1.get(), m2.get(),
-                      m3.get(), m4.get(), m5.get()]
+        self.groupArray = [groupname, m1, m2, m3, m4, m5]
+
+    def createGroupArraySet(self, groupname, m1, m2, m3, m4, m5):
+        group = [groupname.get(), m1.get(), m2.get(),
+                 m3.get(), m4.get(), m5.get()]
+        self.groupArray = group
+        self.setGroupName(groupname)
     
     def getGroupArray(self):
         return self.groupArray
@@ -228,7 +247,7 @@ class Application(Frame):
         groupNameEntry.grid(row=5, column=1)
         self.submitNewGroupButton = Button(self.CreateGroupFrame,
                                            text="Submit",
-                                           command=lambda: (self.setGroupArray(groupNameEntry, member1Entry, 
+                                           command=lambda: (self.createGroupArraySet(groupNameEntry, member1Entry, 
                                                             member2Entry, member3Entry, member4Entry, member5Entry), 
                                                             self.checkGroupExists(groupNameEntry.get(), self.getGroupArray())))
         self.submitNewGroupButton.place(relx=0.27, rely=0.7, relwidth=0.2, relheight=0.1)
@@ -263,13 +282,13 @@ class Application(Frame):
         self.ManageGroupFrame.configure(background="#ffffff")
         self.ManageGroupFrame.configure(highlightbackground="#ffffff")
         self.ManageGroupFrame.configure(highlightcolor="black")
-        self.viewGroupButton = Button(self.ManageGroupFrame,
-                                  text="Manage Group",
-                                  command=lambda: self.viewGroup())
-        self.viewGroupButton.place(relx=0.12, rely=0.3, relwidth=0.2, relheight=0.1)
+        # self.viewGroupButton = Button(self.ManageGroupFrame,
+        #                           text="Manage Group",
+        #                           command=lambda: self.viewGroup())
+        # self.viewGroupButton.place(relx=0.12, rely=0.3, relwidth=0.2, relheight=0.1)
         self.leaveGroupButton = Button(self.ManageGroupFrame,
                                   text="Leave Group",
-                                  command=lambda: self.leaveGroup(self.getUsername(), self.getGroupArray()))
+                                  command=lambda: self.leaveGroup())
         self.leaveGroupButton.place(relx=0.12, rely=0.41, relwidth=0.2, relheight=0.1)
         self.returnFromGroupButton = Button(self.ManageGroupFrame,
                                             text="GO BACK",
@@ -292,17 +311,17 @@ class Application(Frame):
         member1Label.pack(side=TOP,ipadx=2, ipady=6)
 
     def returnFromNewGroup(self):
-            self.CreateGroupFrame.place_forget()
-            self.postLoginScreen()
+        self.CreateGroupFrame.place_forget()
+        self.postLoginScreen()
 
     def returnFromGroup(self):
-            try:
-                self.viewGroupFrame.place_forget()
-            except AttributeError as e:
-                self.ManageGroupFrame.place_forget()
-                self.postLoginScreen()
+        try:
+            self.viewGroupFrame.place_forget()
+        except AttributeError as e:
             self.ManageGroupFrame.place_forget()
             self.postLoginScreen()
+        self.ManageGroupFrame.place_forget()
+        self.postLoginScreen()
 
     # register_acc(self) Function: Takes (3) entries from user (username,
     # password, and password confirmation), ensures that the passwords
