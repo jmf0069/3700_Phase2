@@ -81,7 +81,6 @@ class Application(Frame):
         except AttributeError as e:
             self.LoginFrame.place_forget()
             self.MainMenuFrame.place_forget()
-        self.RegisterFrame.place_forget()
         self.LoginFrame.place_forget()
         self.MainMenuFrame.place_forget()
         self.PostLoginFrame = Frame(root, padx=5, pady=5)
