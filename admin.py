@@ -3,23 +3,23 @@
 #
 # Admin Class is a type of Account
 
-class Admin : 
+class Admin: 
 
 
 # Constructor
-def __init__(self) : 
+def __init__(self): 
 
-def getPreferredRegion() : 
+def getPreferredRegion(): 
 
-def setPreferredRegion() : 
+def setPreferredRegion(): 
 
-def getGroupName() : 
+def getGroupName(): 
 
-def setGroupName(groupName) : 
+def setGroupName(groupName): 
     groupName = gName
 
-def getGroupSize() : 
+def getGroupSize(): 
     return gSize 
 
-def setGroupSize(size) : 
+def setGroupSize(size): 
     gSize = size

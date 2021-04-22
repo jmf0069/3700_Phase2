@@ -6,7 +6,7 @@ from tkinter import messagebox
 # Application Class: The client for the user.
 class Application(Frame):
 
-    # login(self) Funtion: Takes two entries from user (username and password),
+    # login(self) Method: Takes two entries from user (username and password),
     # and upon submission the credentials are checked with the backend to
     # see if login is valid.
     def login(self):
@@ -31,13 +31,13 @@ class Application(Frame):
                                   command=lambda: (self.checkLoginCred(e1, e2)))
         self.submitlogin.grid(row=3, column=3)
 
-    # add_account(user, password) function takes the username and password
+    # add_account(user, password) method takes the username and password
     # of the user and adds the account to the USER_DATA.txt file.
     def add_account(self, user, password):
         with open(USER_DATA, "a") as data:
             data.write(user + " " + password +"\n")
 
-    # get_existing_users() function is used for checking a new user against
+    # get_existing_users() method is used for checking a new user against
     # the other existing users for duplicates etc.
     def get_existing_users(self):
         with open(USER_DATA, "r") as data:
@@ -46,7 +46,7 @@ class Application(Frame):
                 username, password = line.split()
                 yield username, password
 
-    # is_registered(username, password) function takes the username and password
+    # is_registered(username, password) method takes the username and password
     # of a user to return a boolean showing if the account exists or not.
     def is_registered(self, username, password):
         with open(USER_DATA, "r") as data:
@@ -58,11 +58,11 @@ class Application(Frame):
                         return True
             return False
 
-    # setUsername(user) function sets the username.
+    # setUsername(user) method sets the username.
     def setUsername(self, user):
         self.username = user
 
-    # getUsername() function gets the username.
+    # getUsername() method gets the username.
     def getUsername(self):
         return self.username
 
@@ -87,6 +87,7 @@ class Application(Frame):
         else:
             messagebox.showerror("showerror", "Please enter a username and password.")
 
+    # View model for the screen that is shown after a user successfully logs in.
     def postLoginScreen(self):
         try:
             self.RegisterFrame.place_forget()
@@ -120,16 +121,19 @@ class Application(Frame):
                                         command=lambda: self.logout())
         self.logoutButton.pack(side=TOP, expand=True, fill=BOTH)
 
+    # Event handler for the LOGOUT button. Logs the user out.
     def logout(self):
         self.PostLoginFrame.place_forget()
         self.createWidgets()
 
+    # Checks if user is already in a group before they create the group.
     def beforeCreateGroup(self, user):
         if self.findGroupIn(user) == None:
             self.createGroup()
         else:
             messagebox.showerror("showerror", "You are already in a group. Please leave your group to create another.")
 
+    # Returns the groups that are in the array. Useful for checking against existing groups via for loops.
     def get_existing_groups(self):
         group_array = []
         with open(GROUP_DATA, "r") as data:
@@ -138,6 +142,7 @@ class Application(Frame):
                 group_array.append(line.split())
                 yield group_array
 
+    # Finds if a user is in a group. If they are, returns that group.
     def findGroupIn(self, user):
         group_array = []
         with open(GROUP_DATA, "r") as data:
@@ -147,6 +152,7 @@ class Application(Frame):
                     return group_array
             return None
 
+    # Checks if a group exists with the given groupname. Called upon new group creation.
     def groupExists(self, groupname):
         groups = []
         with open(GROUP_DATA, "r") as data:
@@ -156,12 +162,14 @@ class Application(Frame):
                     return True
             return False
 
+    # Has the user leave the group via deleteGroup(...), throws an error if they are not in a group.
     def leaveGroup(self):
         try:
             self.deleteGroup(self.getGroupName(), self.getUsername())
         except AttributeError as e:
             messagebox.showerror("showerror", "You are not currently in a group.")
 
+    # Adds group to the group database. Also checks if the user is already in a group.
     def addGroup(self, group):
         groupCheck = []
         with open(GROUP_DATA, "r") as gdata2:
@@ -174,6 +182,7 @@ class Application(Frame):
             gdata.write(group[0] + " " + group[1] + " " + group[2] + " " + group[3] + " " + group[4] + " " + group[5] +"\n")
             messagebox.showinfo("showinfo", "Your group, " + group[0] + ", has been created!")
 
+    # Removes the specified group from the group database.
     def deleteGroup(self, groupname, user):
         with open("GROUP_DATA.txt", "r") as gdata:
             lines = gdata.readlines()
@@ -184,6 +193,7 @@ class Application(Frame):
                     gdata.write(line)
         messagebox.showinfo("showinfo", "You have successfully left the group.")
 
+    # Checks if the given group is currently registered in the database.
     def checkGroupExists(self, groupname, group):
         if (self.groupExists(groupname)):
             messagebox.showerror("showerror", "Group name is taken. Please try another.")
@@ -191,24 +201,30 @@ class Application(Frame):
             self.addGroup(self.getGroupArray())
             self.returnFromNewGroup()
 
+    # Setter method for the groupname of logged in user.
     def setGroupName(self, groupname):
         self.groupNameOvr = groupname
 
+    # Getter method for the group name of the logged in user.
     def getGroupName(self):
         return self.groupNameOvr
 
+    # Setter method for the group array of the logged in user.
     def setGroupArray(self, groupname, m1, m2, m3, m4, m5):
         self.groupArray = [groupname, m1, m2, m3, m4, m5]
 
+    # Setter method for the group array and group name of newly created group.
     def createGroupArraySet(self, groupname, m1, m2, m3, m4, m5):
         group = [groupname.get(), m1.get(), m2.get(),
                  m3.get(), m4.get(), m5.get()]
         self.groupArray = group
         self.setGroupName(groupname)
     
+    # Getter method for the group array, plays into other methods.
     def getGroupArray(self):
         return self.groupArray
 
+    # View model for creating a new group.
     def createGroup(self):
         self.PostLoginFrame.place_forget()
         self.CreateGroupFrame = Frame(root, padx=5, pady=5)
@@ -263,6 +279,7 @@ class Application(Frame):
                                                command=lambda: self.returnFromNewGroup())
         self.returnFromNewGroupButton.place(relx=0.4, rely=0.83, relwidth=0.2, relheight=0.1)
 
+    # Event handler for the "clear" button when creating a new group. Clears all entries besides owner.
     def clearNewGroupEntries(self, member2, member3, member4, member5, groupName):
         member2.delete(0, 'end')
         member3.delete(0, 'end')
@@ -270,6 +287,7 @@ class Application(Frame):
         member5.delete(0, 'end')
         groupName.delete(0, 'end')
 
+    # View model for the manage group screen.
     def manageGroup(self):
         self.PostLoginFrame.place_forget()
         self.ManageGroupFrame = Frame(root, padx=5, pady=5)
@@ -290,24 +308,12 @@ class Application(Frame):
                                             command=lambda: self.returnFromGroup())
         self.returnFromGroupButton.place(relx=0.12, rely=0.52, relwidth=0.2, relheight=0.1)
 
-    # def viewGroup(self):
-    #     self.viewGroupFrame = Frame(root, padx=5, pady=5)
-    #     self.viewGroupFrame.place(relx=0.435, rely=0.255, relwidth=0.36, relheight=0.18)
-    #     self.viewGroupFrame.configure(relief=GROOVE)
-    #     self.viewGroupFrame.configure(borderwidth="2")
-    #     self.viewGroupFrame.configure(relief=GROOVE)
-    #     self.viewGroupFrame.configure(background="#ffffff")
-    #     self.viewGroupFrame.configure(highlightbackground="#ffffff")
-    #     self.viewGroupFrame.configure(highlightcolor="black")
-    #     groupTopLabel = Label(self.viewGroupFrame, text=self.groupArray[0], padx=5, pady=2)
-    #     # groupTopLabel.place()
-    #     member1Label = Label(self.viewGroupFrame, text=self.groupArray[1], padx=5, pady=2)
-    #     member1Label.pack(side=TOP,ipadx=2, ipady=6)
-
+    # View modifier for returning from the group creation screen.
     def returnFromNewGroup(self):
         self.CreateGroupFrame.place_forget()
         self.postLoginScreen()
 
+    # View modifier for returning from the manage group screen.
     def returnFromGroup(self):
         try:
             self.viewGroupFrame.place_forget()
@@ -317,7 +323,7 @@ class Application(Frame):
         self.ManageGroupFrame.place_forget()
         self.postLoginScreen()
 
-    # register_acc(self) Function: Takes (3) entries from user (username,
+    # register_acc(self) Method: Takes (3) entries from user (username,
     # password, and password confirmation), ensures that the passwords
     # match, and submits the info to the backend so user can login.
     def register_acc(self):
@@ -346,7 +352,7 @@ class Application(Frame):
                                 command=lambda: (self.verifyPasswordRegister(user1, pass1, pass2)))
         self.submitreg.grid(row=3, column=2)
 
-    # verifyPasswordRegister(...) Function: Checks if passwords match.
+    # verifyPasswordRegister(...) Method: Checks if passwords match.
     def verifyPasswordRegister(self, user1, pass1, pass2):
         if (pass1.get() == pass2.get()):
             messagebox.showinfo("showinfo", "Congratulations! You are registered.")
@@ -361,7 +367,7 @@ class Application(Frame):
             pass1.delete(0, 'end')
             pass2.delete(0, 'end')
 
-    # createWidgets(self) Function: Creates the main widgets for the client.
+    # createWidgets(self) Method: Creates the main widgets for the client.
     def createWidgets(self):
         self.MainMenuFrame = Frame(root, padx=5, pady=5)
         self.MainMenuFrame.place(relx=0.12, rely=0.1, relwidth=0.75, relheight=0.5)
@@ -387,6 +393,7 @@ class Application(Frame):
                            command=self.quit)
         self.QUIT.place(relx=0.12, rely=0.52, relwidth=0.2, relheight=0.1)
 
+    # Initializer for the client.
     def __init__(self, master=None):
         Frame.__init__(self, master)
         self.createWidgets()
